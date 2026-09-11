@@ -19,7 +19,7 @@ namespace Sailing;
 public class Sailing : BaseUnityPlugin
 {
 	private const string ModName = "Sailing";
-	private const string ModVersion = "1.1.8";
+	private const string ModVersion = "1.1.9";
 	private const string ModGUID = "org.bepinex.plugins.sailing";
 
 	private static readonly ConfigSync configSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
@@ -142,7 +142,7 @@ public class Sailing : BaseUnityPlugin
 
 		Regex regex = new("['[\"\\]]");
 
-		List<string> shipOrder = new() { "$ship_longship", "$ship_karve", "$ship_raft" };
+		List<string> shipOrder = new() { "$ship_longship_ashlands", "$ship_longship", "$ship_karve", "$ship_raft" };
 		foreach (Ship ship in prefabs.Select(p => p.GetComponent<Ship>()).Where(s => s?.GetComponent<Piece>() != null).OrderByDescending(s => shipOrder.IndexOf(s.GetComponent<Piece>().m_name)))
 		{
 			int order = -shipSpeedIncrease.Count * 4;
@@ -268,6 +268,7 @@ public class Sailing : BaseUnityPlugin
 					}
 				}
 			}
+
 			timer.lastUpdate = Time.fixedTime;
 		}
 	}
