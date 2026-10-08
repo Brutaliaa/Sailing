@@ -1,0 +1,7 @@
+sailing_skill: "Sailing"
+sailing_skill_description: "Increases the health of ships built by you, sailing speed of ships commanded by you and your exploration radius while on a ship."
+sailing_nudge_interact: "Push ship"
+sailing_nudge_failed: "Please don't nudge your ship with your butt."
+sailing_no_full_sail: "Your sailing skill is too low to sail this ship with full sail."
+sailing_no_reduced_sail: "Your sailing skill is too low to sail this ship with reduced sail."
+sailing_no_sail: "Your sailing skill is too low to command this ship."

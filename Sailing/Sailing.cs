@@ -8,6 +8,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
 using JetBrains.Annotations;
+using LocalizationManager;
 using ServerSync;
 using SkillManager;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Sailing;
 public class Sailing : BaseUnityPlugin
 {
 	private const string ModName = "Sailing";
-	private const string ModVersion = "1.1.9";
+	private const string ModVersion = "1.1.10";
 	private const string ModGUID = "org.bepinex.plugins.sailing";
 
 	private static readonly ConfigSync configSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
@@ -137,8 +138,14 @@ public class Sailing : BaseUnityPlugin
 
 	private static void FetchShipPieces(IEnumerable<GameObject> prefabs)
 	{
+		Localizer.Load();
+		
 		Localization english = new();
 		english.SetupLanguage("English");
+		
+		sailing = new Skill("Sailing", "sailing.png");
+		sailing.Name.Alias("sailing_skill");
+		sailing.Description.Alias("sailing_skill_description");
 
 		Regex regex = new("['[\"\\]]");
 
@@ -189,7 +196,7 @@ public class Sailing : BaseUnityPlugin
 				}
 				else
 				{
-					Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Please don't nudge your ship with your butt.");
+					Player.m_localPlayer.Message(MessageHud.MessageType.Center, Localization.instance.Localize("$sailing_nudge_failed"));
 				}
 
 				return false;
@@ -209,7 +216,7 @@ public class Sailing : BaseUnityPlugin
 				return;
 			}
 
-			__result += Localization.instance.Localize($"\n[<b><color=yellow>{shipNudgeModifierkey.Value}</color> + <color=yellow>$KEY_Use</color></b>] Push ship");
+			__result += Localization.instance.Localize($"\n[<b><color=yellow>{shipNudgeModifierkey.Value}</color> + <color=yellow>$KEY_Use</color></b>] $sailing_nudge_interact");
 		}
 	}
 
@@ -280,14 +287,14 @@ public class Sailing : BaseUnityPlugin
 		{
 			if (__instance.m_speed is Ship.Speed.Slow && shipHalfRequirement.TryGetValue(__instance.GetComponent<Piece>().m_name, out ConfigEntry<int> requiredHalfLevel) && requiredHalfLevel.Value > Mathf.RoundToInt(Player.m_localPlayer.GetSkillFactor("Sailing") * 100))
 			{
-				Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Your sailing skill is too low to sail this ship with reduced sail.");
+				Player.m_localPlayer.Message(MessageHud.MessageType.Center, Localization.instance.Localize("$sailing_no_reduced_sail"));
 
 				return false;
 			}
 
 			if (__instance.m_speed is Ship.Speed.Half && shipFullRequirement.TryGetValue(__instance.GetComponent<Piece>().m_name, out ConfigEntry<int> requiredFullLevel) && requiredFullLevel.Value > Mathf.RoundToInt(Player.m_localPlayer.GetSkillFactor("Sailing") * 100))
 			{
-				Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Your sailing skill is too low to sail this ship with full sail.");
+				Player.m_localPlayer.Message(MessageHud.MessageType.Center, Localization.instance.Localize("$sailing_no_full_sail"));
 
 				return false;
 			}
@@ -306,7 +313,7 @@ public class Sailing : BaseUnityPlugin
 				return true;
 			}
 
-			Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Your sailing skill is too low to command this ship.");
+			Player.m_localPlayer.Message(MessageHud.MessageType.Center, Localization.instance.Localize("$sailing_no_sail"));
 			return false;
 		}
 	}
